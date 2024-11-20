@@ -28,3 +28,6 @@ minikube dashboard -p k8s-node
 
 ### Demo
 https://www.youtube.com/watch?v=nJVRJt4G-l0
+
+### Deploy
+- rancher [here](rancher)
