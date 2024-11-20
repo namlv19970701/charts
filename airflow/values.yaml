@@ -108,7 +108,7 @@ image:
 auth:
   ## @param auth.username Username to access web UI
   ##
-  username: user
+  username: levietnam
   ## @param auth.password Password to access web UI
   ##
   password: ""
@@ -130,7 +130,7 @@ auth:
 ## @param executor Airflow executor. Allowed values: `SequentialExecutor`, `LocalExecutor`, `CeleryExecutor`, `KubernetesExecutor`, `CeleryKubernetesExecutor` and `LocalKubernetesExecutor`
 ## ref: http://airflow.apache.org/docs/stable/executor/index.html
 ##
-executor: CeleryKubernetesExecutor
+executor: KubernetesExecutor
 ## @param loadExamples Switch to load some Airflow examples
 ##
 loadExamples: false
@@ -162,9 +162,9 @@ dags:
   ##
   repositories:
     - repository: https://github.com/namlv19970701/charts
-      branch: main
-      name: dags
-      path: jobs/airflow/
+      branch: develop
+      name: jobs/airflow
+      path: /
   ## @param dags.sshKey SSH Private key used to clone/sync DAGs from Git repositories (ignored if dags.existingSshKeySecret is set)
   ##
   sshKey: ""
@@ -566,7 +566,7 @@ web:
   lifecycleHooks: {}
   ## @param web.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param web.hostAliases Deployment pod host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
@@ -906,7 +906,7 @@ scheduler:
   lifecycleHooks: {}
   ## @param scheduler.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param scheduler.hostAliases Deployment pod host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
@@ -1113,7 +1113,7 @@ scheduler:
 dagProcessor:
   ## @param dagProcessor.enabled Run Airflow Dag Processor Manager as a standalone component
   ##
-  enabled: false
+  enabled: true
   ## @param dagProcessor.replicaCount Number of Airflow Dag Processor replicas
   ##
   replicaCount: 1
@@ -1247,7 +1247,7 @@ dagProcessor:
   lifecycleHooks: {}
   ## @param dagProcessor.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param dagProcessor.hostAliases Deployment pod host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
@@ -2045,7 +2045,7 @@ worker:
   lifecycleHooks: {}
   ## @param worker.automountServiceAccountToken Mount Service Account token in pod
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param worker.hostAliases Deployment pod host aliases
   ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
   ##
