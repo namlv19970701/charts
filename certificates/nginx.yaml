@@ -1,0 +1,20 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ingress-nginx-tls-issuer
+  namespace: webservers
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ingress-nginx-tls-cert
+  namespace: webservers
+spec:
+  secretName: ingress-nginx-tls
+  issuerRef:
+    name: ingress-nginx-tls-issuer
+    kind: Issuer
+  commonName: nginx.levietnam.local
