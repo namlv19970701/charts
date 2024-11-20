@@ -2484,7 +2484,7 @@ serviceAccount:
   ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
   ## Can be set to false if pods using this serviceAccount do not need to use K8s API
   ##
-  automountServiceAccountToken: false
+  automountServiceAccountToken: true
   ## @param serviceAccount.annotations Additional custom annotations for the ServiceAccount
   ##
   annotations: {}
@@ -2493,7 +2493,7 @@ serviceAccount:
 ## @param rbac.create Create Role and RoleBinding
 ##
 rbac:
-  create: false
+  create: true
   ## @param rbac.rules Custom RBAC rules to set
   ## e.g:
   ## rules:
@@ -2849,7 +2849,7 @@ postgresql:
 externalDatabase:
   host: posttgresql-postgresql.database
   port: 5432
-  user: postgres
+  user: postgres  
   database: airflow
   password: ""
   existingSecret: "postgresql"

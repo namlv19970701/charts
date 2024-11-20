@@ -191,39 +191,7 @@ metadata:
     app.kubernetes.io/name: airflow
     app.kubernetes.io/version: 2.10.3
     helm.sh/chart: airflow-21.4.1
-automountServiceAccountToken: false
----
-# Source: airflow/templates/config/secret-external-db.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: airflow-externaldb
-  namespace: "analytics"
-  labels:
-    app.kubernetes.io/instance: airflow
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: airflow
-    app.kubernetes.io/version: 2.10.3
-    helm.sh/chart: airflow-21.4.1
-type: Opaque
-data:
-  password: ""
----
-# Source: airflow/templates/config/secret-external-redis.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: airflow-externalredis
-  namespace: "analytics"
-  labels:
-    app.kubernetes.io/instance: airflow
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: airflow
-    app.kubernetes.io/version: 2.10.3
-    helm.sh/chart: airflow-21.4.1
-type: Opaque
-data:
-  redis-password: ""
+automountServiceAccountToken: true
 ---
 # Source: airflow/templates/config/secret.yaml
 apiVersion: v1
@@ -239,12 +207,12 @@ metadata:
     helm.sh/chart: airflow-21.4.1
 type: Opaque
 data:
-  airflow-password: "akhnUzNKSEM2RA=="
+  airflow-password: "emJKeU12cU1FeQ=="
   # Airflow keys must be base64-encoded, hence we need to pipe to 'b64enc' twice
   # The auto-generation mechanism available at "common.secrets.passwords.manage" isn't compatible with encoding twice
   # Therefore, we can only use this function if the secret already exists
-  airflow-fernet-key: "UTNSVVNFUkNaMHBLU2xZeWMyVndWbGhqTVVKb2RqZzNaMUZSUTJsS05qRT0="
-  airflow-secret-key: "T0hob1RUUmhZMlIyYjFSRmJEaEdVR3BYVVVwRFRqWXpXazlMZUU5bWNHaz0="
+  airflow-fernet-key: "VEhKWlQzTnVSemhDUnpaM1VUVXpNV04wUjBSUWFGUlNkREJPTkZVM1VrMD0="
+  airflow-secret-key: "YUdOVFZrWXdaa2Q0TnpacFQzY3hXWFpEVWpFNFpXbEdaa3BDTVZSVU9UST0="
 ---
 # Source: airflow/templates/config/configmap.yaml
 apiVersion: v1
@@ -349,10 +317,10 @@ data:
             - name: AIRFLOW_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externaldb
-                  key: password
+                  name: postgresql
+                  key: postgres-password
             - name: AIRFLOW_DATABASE_HOST
-              value: "postgresql-primary-0.database"
+              value: "posttgresql-postgresql.database"
             - name: AIRFLOW_DATABASE_PORT_NUMBER
               value: "5432"
             
@@ -363,7 +331,7 @@ data:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externalredis
+                  name: redis
                   key: redis-password
             
             - name: AIRFLOW__KUBERNETES__NAMESPACE
@@ -506,10 +474,10 @@ data:
             - name: AIRFLOW_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externaldb
-                  key: password
+                  name: postgresql
+                  key: postgres-password
             - name: AIRFLOW_DATABASE_HOST
-              value: "postgresql-primary-0.database"
+              value: "posttgresql-postgresql.database"
             - name: AIRFLOW_DATABASE_PORT_NUMBER
               value: "5432"
             
@@ -520,7 +488,7 @@ data:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externalredis
+                  name: redis
                   key: redis-password
             - name: AIRFLOW_COMPONENT_TYPE
               value: "worker"
@@ -647,6 +615,65 @@ data:
         - name: empty-dir
           emptyDir: {}
 ---
+# Source: airflow/templates/rbac/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: airflow
+  namespace: "analytics"
+  labels:
+    app.kubernetes.io/instance: airflow
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: airflow
+    app.kubernetes.io/version: 2.10.3
+    helm.sh/chart: airflow-21.4.1
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "pods"
+    verbs:
+      - "create"
+      - "list"
+      - "get"
+      - "watch"
+      - "delete"
+      - "patch"
+  - apiGroups:
+      - ""
+    resources:
+      - "pods/log"
+    verbs:
+      - "get"
+  - apiGroups:
+      - ""
+    resources:
+      - "pods/exec"
+    verbs:
+      - "create"
+      - "get"
+---
+# Source: airflow/templates/rbac/rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: airflow
+  namespace: "analytics"
+  labels:
+    app.kubernetes.io/instance: airflow
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: airflow
+    app.kubernetes.io/version: 2.10.3
+    helm.sh/chart: airflow-21.4.1
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: airflow
+subjects:
+  - kind: ServiceAccount
+    name: airflow
+    namespace: "analytics"
+---
 # Source: airflow/templates/web/service.yaml
 apiVersion: v1
 kind: Service
@@ -732,7 +759,7 @@ spec:
         helm.sh/chart: airflow-21.4.1
         app.kubernetes.io/component: scheduler
       annotations:
-        checksum/configmap: 49d2a17f1c33a3cfcb31e30ab429de2c7a4ef25d54dcd9d355c3ddb17ff253d2
+        checksum/configmap: 5c84ea3129bdaa426aae593a69d3e4f37789bff7e6140eb7853c6647816d0d99
     spec:
       
       automountServiceAccountToken: false
@@ -896,10 +923,10 @@ spec:
             - name: AIRFLOW_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externaldb
-                  key: password
+                  name: postgresql
+                  key: postgres-password
             - name: AIRFLOW_DATABASE_HOST
-              value: "postgresql-primary-0.database"
+              value: "posttgresql-postgresql.database"
             - name: AIRFLOW_DATABASE_PORT_NUMBER
               value: "5432"
             
@@ -910,7 +937,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externalredis
+                  name: redis
                   key: redis-password
             
             - name: AIRFLOW__KUBERNETES__NAMESPACE
@@ -1099,7 +1126,7 @@ spec:
         helm.sh/chart: airflow-21.4.1
         app.kubernetes.io/component: web
       annotations:
-        checksum/configmap: 49d2a17f1c33a3cfcb31e30ab429de2c7a4ef25d54dcd9d355c3ddb17ff253d2
+        checksum/configmap: 5c84ea3129bdaa426aae593a69d3e4f37789bff7e6140eb7853c6647816d0d99
     spec:
       
       automountServiceAccountToken: false
@@ -1206,10 +1233,10 @@ spec:
             - name: AIRFLOW_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externaldb
-                  key: password
+                  name: postgresql
+                  key: postgres-password
             - name: AIRFLOW_DATABASE_HOST
-              value: "postgresql-primary-0.database"
+              value: "posttgresql-postgresql.database"
             - name: AIRFLOW_DATABASE_PORT_NUMBER
               value: "5432"
             
@@ -1220,7 +1247,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externalredis
+                  name: redis
                   key: redis-password
             
             - name: AIRFLOW__KUBERNETES__NAMESPACE
@@ -1343,7 +1370,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/configmap: 49d2a17f1c33a3cfcb31e30ab429de2c7a4ef25d54dcd9d355c3ddb17ff253d2
+        checksum/configmap: 5c84ea3129bdaa426aae593a69d3e4f37789bff7e6140eb7853c6647816d0d99
       labels:
         app.kubernetes.io/instance: airflow
         app.kubernetes.io/managed-by: Helm
@@ -1514,10 +1541,10 @@ spec:
             - name: AIRFLOW_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externaldb
-                  key: password
+                  name: postgresql
+                  key: postgres-password
             - name: AIRFLOW_DATABASE_HOST
-              value: "postgresql-primary-0.database"
+              value: "posttgresql-postgresql.database"
             - name: AIRFLOW_DATABASE_PORT_NUMBER
               value: "5432"
             
@@ -1528,7 +1555,7 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: airflow-externalredis
+                  name: redis
                   key: redis-password
             - name: AIRFLOW_COMPONENT_TYPE
               value: "worker"
