@@ -43,5 +43,5 @@ echo "<minikube_ip> rancher.levietnam.local" | sudo tee -a /etc/hosts > /dev/nul
 
 
 ## Demo
-![Alt text](images/rancher.png)
+![Alt text](/images/rancher.png)
 
