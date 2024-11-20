@@ -18,7 +18,7 @@ kubectl apply -f cert-manager.yaml
 ```
 
 ## Demo
-![Alt text](images/cert-manager.png)
+![Alt text](/images/cert-manager.png)
 
 
 
