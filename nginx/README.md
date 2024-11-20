@@ -42,5 +42,5 @@ echo "<minikube_ip> nginx.levietnam.local" | sudo tee -a /etc/hosts > /dev/null
 
 
 ## Demo
-![Alt text](images/nginx.png)
+![Alt text](/images/nginx.png)
 
