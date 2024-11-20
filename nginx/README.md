@@ -31,7 +31,8 @@ minikube addons enable ingress -p k8s-node
 
 ## Add host to your local machine
 Check minikube ip
-```minikube ip -p node
+```
+minikube ip -p node
 ```
 
 Add host ```nginx.levietnam.local```
