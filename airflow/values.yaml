@@ -108,7 +108,7 @@ image:
 auth:
   ## @param auth.username Username to access web UI
   ##
-  username: levietnam
+  username: user
   ## @param auth.password Password to access web UI
   ##
   password: ""
@@ -130,7 +130,7 @@ auth:
 ## @param executor Airflow executor. Allowed values: `SequentialExecutor`, `LocalExecutor`, `CeleryExecutor`, `KubernetesExecutor`, `CeleryKubernetesExecutor` and `LocalKubernetesExecutor`
 ## ref: http://airflow.apache.org/docs/stable/executor/index.html
 ##
-executor: KubernetesExecutor
+executor: CeleryExecutor
 ## @param loadExamples Switch to load some Airflow examples
 ##
 loadExamples: false
@@ -151,7 +151,7 @@ existingConfigmap: ""
 ## @param dags.repositories [array] Array of repositories from which to download DAG files
 ##
 dags:
-  enabled: true
+  enabled: false
   existingConfigmap: ""
   ## E.g:
   ## repositories:
@@ -163,7 +163,7 @@ dags:
   repositories:
     - repository: https://github.com/namlv19970701/charts
       branch: develop
-      name: jobs/airflow
+      name: ""
       path: /
   ## @param dags.sshKey SSH Private key used to clone/sync DAGs from Git repositories (ignored if dags.existingSshKeySecret is set)
   ##
@@ -187,7 +187,12 @@ plugins:
   ##     name: my-plugins
   ##     path: /
   ##
-  repositories: []
+  # repositories: []
+  repositories:
+    - repository: https://github.com/namlv19970701/charts
+      branch: develop
+      name: ""
+      path: /
   ## @param plugins.sshKey SSH Private key used to clone/sync plugins from Git repositories (ignored if plugins.existingSshKeySecret is set)
   ##
   sshKey: ""
@@ -1113,7 +1118,7 @@ scheduler:
 dagProcessor:
   ## @param dagProcessor.enabled Run Airflow Dag Processor Manager as a standalone component
   ##
-  enabled: true
+  enabled: false
   ## @param dagProcessor.replicaCount Number of Airflow Dag Processor replicas
   ##
   replicaCount: 1
