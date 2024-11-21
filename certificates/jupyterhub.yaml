@@ -1,0 +1,20 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: ingress-jupyterhub-tls-issuer
+  namespace: analytics
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ingress-jupyterhub-tls-cert
+  namespace: analytics
+spec:
+  secretName: ingress-jupyterhub-tls
+  issuerRef:
+    name: ingress-jupyterhub-tls-issuer
+    kind: Issuer
+  commonName: jupyterhub.levietnam.local
