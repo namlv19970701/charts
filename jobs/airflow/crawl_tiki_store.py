@@ -39,7 +39,7 @@ def run_store_api(ids):
         )
                         
                 
-@dag(schedule_interval='@daily', start_date=datetime(2024, 1, 1), catchup=False)
+@dag(schedule_interval='0 */6 * * *', start_date=datetime(2024, 1, 1), catchup=False)
 def crawl_product():
 
     run_store_api(extract_stores_from_snowflake(sql=job_variable['sql']))
