@@ -1,7 +1,6 @@
 from confluent_kafka.avro import AvroProducer
 import requests
 import json
-from tqdm.auto import tqdm
 from datetime import datetime
 from confluent_kafka import avro
 
